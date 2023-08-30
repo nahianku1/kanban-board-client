@@ -191,7 +191,7 @@ function TodoBoard({ title }) {
             {cards.map((card) => (
               <Tile key={card._id} card={card}>
                 <div className="flex justify-between items-center px-[5px]">
-                  <h3>{card.title}</h3>
+                  <h3 className="font-bold">{card.title}</h3>
                   <div className="flex gap-2 items-center">
                     <button onClick={() => handleEdit(card)}>
                       <FaPenToSquare className="text-blue-400 hover:cursor-pointer" />
@@ -201,7 +201,7 @@ function TodoBoard({ title }) {
                     </button>
                   </div>
                 </div>
-                <p className="px-[5px]">{card.description}</p>
+                <p className="px-[5px] text-[13px]">{card.description}</p>
               </Tile>
             ))}
           </ReactSortable>
