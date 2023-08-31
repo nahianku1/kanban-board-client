@@ -64,4 +64,7 @@ sortablejs
 
 <h1>The Server-side Link of Web app</h1>
 
+<h1>The screen-shot the of Web app</h1>
+<img src='public/kanban-board.png'/>
+
 <strong>Link:</strong> <a>https://github.com/nahianku1/kanban-board-server</a>
