@@ -15,7 +15,7 @@ function DoingBoard({ title }) {
   let { data } = useQuery({
     queryKey: ["doing"],
     queryFn: () => {
-      return axios.get("http://localhost:5000/get-todos?collection=doing");
+      return axios.get("https://kanban-board-server-eight.vercel.app/get-todos?collection=doing");
     },
   });
 
@@ -36,7 +36,7 @@ function DoingBoard({ title }) {
   let { mutateAsync } = useMutation({
     mutationFn: (newtodo) => {
       return axios.post(
-        `http://localhost:5000/create-todos?collection=doing`,
+        `https://kanban-board-server-eight.vercel.app/create-todos?collection=doing`,
         newtodo
       );
     },
@@ -54,7 +54,7 @@ function DoingBoard({ title }) {
   let { mutateAsync: deleteMutateAsync } = useMutation({
     mutationFn: (id) => {
       return axios.delete(
-        `http://localhost:5000/delete-todos/${id}?collection=doing`
+        `https://kanban-board-server-eight.vercel.app/delete-todos/${id}?collection=doing`
       );
     },
     onSuccess: async () => {
@@ -118,7 +118,7 @@ function DoingBoard({ title }) {
 
   let modify = async (from, to, item) => {
     let res = await axios.post(
-      `http://localhost:5000/sorting?collection=doing`,
+      `https://kanban-board-server-eight.vercel.app/sorting?collection=doing`,
       {
         from,
         to,
@@ -131,7 +131,7 @@ function DoingBoard({ title }) {
 
   let modifyAdd = async (from, to, item) => {
     let res = await axios.post(
-      `http://localhost:5000/sorting-add?collection=doing`,
+      `https://kanban-board-server-eight.vercel.app/sorting-add?collection=doing`,
       {
         from,
         to,
