@@ -14,7 +14,7 @@ function DoneBoard({ title }) {
   let { data } = useQuery({
     queryKey: ["done"],
     queryFn: () => {
-      return axios.get("https://kanban-board-server-one.vercel.app/get-todos?collection=done");
+      return axios.get("http://localhost:5000/get-todos?collection=done");
     },
   });
 
@@ -28,11 +28,13 @@ function DoneBoard({ title }) {
   const [description, setDescription] = useState("");
   const [modalinfo, setModalinfo] = useState();
   const [cards, setCards] = useState(data?.data ?? []);
+  const [dragstart, setDragstart] = useState(false);
+  const [id, setId] = useState();
 
   let { mutateAsync } = useMutation({
     mutationFn: (newtodo) => {
       return axios.post(
-        `https://kanban-board-server-one.vercel.app/create-todos?collection=done`,
+        `http://localhost:5000/create-todos?collection=done`,
         newtodo
       );
     },
@@ -48,7 +50,7 @@ function DoneBoard({ title }) {
   let { mutateAsync: deleteMutateAsync } = useMutation({
     mutationFn: (id) => {
       return axios.delete(
-        `https://kanban-board-server-one.vercel.app/delete-todos/${id}?collection=done`
+        `http://localhost:5000/delete-todos/${id}?collection=done`
       );
     },
     onSuccess: async () => {
@@ -111,7 +113,7 @@ function DoneBoard({ title }) {
   let ulist;
   let modify = async (from, to, item) => {
     let res = await axios.post(
-      `https://kanban-board-server-one.vercel.app/sorting?collection=done`,
+      `http://localhost:5000/sorting?collection=done`,
       {
         from,
         to,
@@ -120,12 +122,11 @@ function DoneBoard({ title }) {
       }
     );
     console.log(res);
-    
   };
 
   let modifyAdd = async (from, to, item) => {
     let res = await axios.post(
-      `https://kanban-board-server-one.vercel.app/sorting-add?collection=done`,
+      `http://localhost:5000/sorting-add?collection=done`,
       {
         from,
         to,
@@ -134,7 +135,6 @@ function DoneBoard({ title }) {
       }
     );
     console.log(res);
-    
   };
 
   return (
@@ -185,9 +185,18 @@ function DoneBoard({ title }) {
                 return;
               }
             }}
+            onStart={(e) => {
+              console.log(`dragstart `);
+              setDragstart(true);
+              setId(e.item.dataset.id);
+            }}
+            onEnd={() => {
+              console.log(`dragend`);
+              setDragstart(false);
+            }}
           >
             {cards.map((card) => (
-              <Tile key={card._id} card={card}>
+              <Tile key={card._id} card={card} dragstart={dragstart} id={id}>
                 <div className="flex justify-between items-center px-[5px]">
                   <h3 className="font-bold">{card.title}</h3>
                   <div className="flex gap-2 items-center">

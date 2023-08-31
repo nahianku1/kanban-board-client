@@ -15,7 +15,7 @@ function DoingBoard({ title }) {
   let { data } = useQuery({
     queryKey: ["doing"],
     queryFn: () => {
-      return axios.get("https://kanban-board-server-one.vercel.app/get-todos?collection=doing");
+      return axios.get("http://localhost:5000/get-todos?collection=doing");
     },
   });
 
@@ -29,11 +29,14 @@ function DoingBoard({ title }) {
   const [description, setDescription] = useState("");
   const [modalinfo, setModalinfo] = useState();
   const [cards, setCards] = useState(data?.data ?? []);
+  const [dragstart, setDragstart] = useState(false);
+  const [id, setId] = useState();
+
 
   let { mutateAsync } = useMutation({
     mutationFn: (newtodo) => {
       return axios.post(
-        `https://kanban-board-server-one.vercel.app/create-todos?collection=doing`,
+        `http://localhost:5000/create-todos?collection=doing`,
         newtodo
       );
     },
@@ -46,10 +49,12 @@ function DoingBoard({ title }) {
     },
   });
 
+
+
   let { mutateAsync: deleteMutateAsync } = useMutation({
     mutationFn: (id) => {
       return axios.delete(
-        `https://kanban-board-server-one.vercel.app/delete-todos/${id}?collection=doing`
+        `http://localhost:5000/delete-todos/${id}?collection=doing`
       );
     },
     onSuccess: async () => {
@@ -113,7 +118,7 @@ function DoingBoard({ title }) {
 
   let modify = async (from, to, item) => {
     let res = await axios.post(
-      `https://kanban-board-server-one.vercel.app/sorting?collection=doing`,
+      `http://localhost:5000/sorting?collection=doing`,
       {
         from,
         to,
@@ -122,12 +127,11 @@ function DoingBoard({ title }) {
       }
     );
     console.log(res);
-    
   };
 
   let modifyAdd = async (from, to, item) => {
     let res = await axios.post(
-      `https://kanban-board-server-one.vercel.app/sorting-add?collection=doing`,
+      `http://localhost:5000/sorting-add?collection=doing`,
       {
         from,
         to,
@@ -136,7 +140,6 @@ function DoingBoard({ title }) {
       }
     );
     console.log(res);
-    
   };
 
   return (
@@ -187,9 +190,23 @@ function DoingBoard({ title }) {
                 return;
               }
             }}
+            onStart={(e) => {
+              console.log(`dragstart `);
+              setDragstart(true);
+              setId(e.item.dataset.id)
+            }}
+            onEnd={() => {
+              console.log(`dragend`);
+              setDragstart(false);
+            }}
           >
             {cards.map((card) => (
-              <Tile key={card._id} card={card}>
+              <Tile
+                key={card._id}
+                card={card}
+                dragstart={dragstart}
+                id={id}
+              >
                 <div className="flex justify-between items-center px-[5px]">
                   <h3 className="font-bold">{card.title}</h3>
                   <div className="flex gap-2 items-center">

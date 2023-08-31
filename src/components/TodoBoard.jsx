@@ -16,7 +16,7 @@ function TodoBoard({ title }) {
   let { data } = useQuery({
     queryKey: ["todos"],
     queryFn: () => {
-      return axios.get("https://kanban-board-server-one.vercel.app/get-todos?collection=to-do");
+      return axios.get("http://localhost:5000/get-todos?collection=to-do");
     },
   });
 
@@ -30,11 +30,13 @@ function TodoBoard({ title }) {
   const [description, setDescription] = useState("");
   const [modalinfo, setModalinfo] = useState();
   const [cards, setCards] = useState(data?.data ?? []);
+  const [dragstart, setDragstart] = useState(false);
+  const [id, setId] = useState();
 
   let { mutateAsync } = useMutation({
     mutationFn: (newtodo) => {
       return axios.post(
-        `https://kanban-board-server-one.vercel.app/create-todos?collection=to-do`,
+        `http://localhost:5000/create-todos?collection=to-do`,
         newtodo
       );
     },
@@ -47,10 +49,12 @@ function TodoBoard({ title }) {
     },
   });
 
+
+
   let { mutateAsync: deleteMutateAsync } = useMutation({
     mutationFn: (id) => {
       return axios.delete(
-        `https://kanban-board-server-one.vercel.app/delete-todos/${id}?collection=to-do`
+        `http://localhost:5000/delete-todos/${id}?collection=to-do`
       );
     },
     onSuccess: async () => {
@@ -113,7 +117,7 @@ function TodoBoard({ title }) {
   let ulist;
   let modify = async (from, to, item) => {
     let res = await axios.post(
-      `https://kanban-board-server-one.vercel.app/sorting?collection=to-do`,
+      `http://localhost:5000/sorting?collection=to-do`,
       {
         from,
         to,
@@ -122,12 +126,11 @@ function TodoBoard({ title }) {
       }
     );
     console.log(res);
-    
   };
 
   let modifyAdd = async (from, to, item) => {
     let res = await axios.post(
-      `https://kanban-board-server-one.vercel.app/sorting-add?collection=to-do`,
+      `http://localhost:5000/sorting-add?collection=to-do`,
       {
         from,
         to,
@@ -136,7 +139,6 @@ function TodoBoard({ title }) {
       }
     );
     console.log(res);
-    
   };
 
   return (
@@ -187,9 +189,23 @@ function TodoBoard({ title }) {
                 return;
               }
             }}
+            onStart={(e) => {
+              console.log(`dragstart `);
+              setDragstart(true);
+              setId(e.item.dataset.id);
+            }}
+            onEnd={() => {
+              console.log(`dragend`);
+              setDragstart(false);
+            }}
           >
             {cards.map((card) => (
-              <Tile key={card._id} card={card}>
+              <Tile
+                key={card._id}
+                card={card}
+                dragstart={dragstart}
+                id={id}
+              >
                 <div className="flex justify-between items-center px-[5px]">
                   <h3 className="font-bold">{card.title}</h3>
                   <div className="flex gap-2 items-center">

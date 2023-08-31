@@ -10,7 +10,7 @@ function Modal({ collection, modalinfo, setShowModal, setCards }) {
   let { mutateAsync } = useMutation({
     mutationFn: (updatedtodo) => {
       return axios.put(
-        `https://kanban-board-server-one.vercel.app/update-todos/${modalinfo._id}?collection=${collection}`,
+        `http://localhost:5000/update-todos/${modalinfo._id}?collection=${collection}`,
         updatedtodo
       );
     },
